@@ -6,7 +6,6 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip,
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from "recharts";
-import { useSearchParams } from "next/navigation";
 
 interface InsightData {
   totalActual: number;
@@ -28,8 +27,8 @@ const fmtSoles = (n: number) =>
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [data, setData] = useState<InsightData | null>(null);
+  const [alertas, setAlertas] = useState<{ categoria: string; actual: number; promedio: number; pct: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [gmailStatus, setGmailStatus] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
@@ -40,6 +39,11 @@ export default function DashboardPage() {
       const json = await res.json();
       setData(json);
     }
+    const resAlerts = await fetch("/api/alerts");
+    if (resAlerts.ok) {
+      const json = await resAlerts.json();
+      setAlertas(json.alertas || []);
+    }
     setLoading(false);
   }, []);
 
@@ -47,11 +51,12 @@ export default function DashboardPage() {
     if (status === "unauthenticated") router.push("/login");
     if (status === "authenticated") {
       fetchInsights();
-      const gmail = searchParams.get("gmail");
+      const params = new URLSearchParams(window.location.search);
+      const gmail = params.get("gmail");
       if (gmail === "connected") setGmailStatus("Conectado exitosamente");
       if (gmail === "error") setGmailStatus("Error al conectar Gmail");
     }
-  }, [status, router, searchParams, fetchInsights]);
+  }, [status, router, fetchInsights]);
 
   async function connectGmail() {
     const res = await fetch("/api/gmail/oauth");
@@ -167,6 +172,28 @@ export default function DashboardPage() {
               ))}
             </ul>
           </div>
+
+          {/* Alertas */}
+          {alertas.length > 0 && (
+            <div className="bg-amber-brand/5 border border-amber-brand/30 rounded-2xl p-6">
+              <h2 className="text-lg font-semibold text-amber-brand mb-3">⚠️ Alertas</h2>
+              <div className="space-y-2">
+                {alertas.map((a, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-background/60 border border-amber-brand/20">
+                    <div>
+                      <p className="font-medium text-graphite-brand text-sm">{a.categoria}</p>
+                      <p className="text-xs text-text-secondary">
+                        Llevas S/ {a.actual.toFixed(2)} vs. tu promedio de S/ {a.promedio.toFixed(2)}
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full bg-amber-brand/20 text-amber-brand text-xs font-bold">
+                      +{a.pct.toFixed(0)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Charts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

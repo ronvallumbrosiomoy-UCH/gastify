@@ -12,6 +12,7 @@ export default function Navigation() {
     { href: "/transactions", label: "Transacciones" },
     { href: "/rules", label: "Reglas" },
     { href: "/chat", label: "Asesor IA" },
+    { href: "/pricing", label: "⭐ Premium" },
   ];
 
   return (
