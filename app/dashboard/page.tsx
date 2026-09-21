@@ -60,9 +60,17 @@ export default function DashboardPage() {
   }, [status, router, fetchInsights]);
 
   async function connectGmail() {
-    const res = await fetch("/api/gmail/oauth");
-    const json = await res.json();
-    if (json.url) window.location.href = json.url;
+    try {
+      const res = await fetch("/api/gmail/oauth");
+      const json = await res.json();
+      if (json.url) {
+        window.location.href = json.url;
+      } else {
+        setGmailStatus(`Error: ${json.error || "No se pudo generar la URL de conexión"}`);
+      }
+    } catch {
+      setGmailStatus("Error de conexión al intentar conectar Gmail");
+    }
   }
 
   async function syncGmail() {
