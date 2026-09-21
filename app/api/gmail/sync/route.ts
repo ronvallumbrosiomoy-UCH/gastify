@@ -8,7 +8,6 @@ import {
   esRemitenteBancario,
   getBancoFromEmail,
   categorizarPorComercio,
-  type EmailMessage,
 } from "@/lib/gmail/parsers";
 
 const BASE64_HEADER = /^=\?UTF-8\?/;
@@ -40,14 +39,14 @@ function decodeHeaderValue(value: string): string {
   return value;
 }
 
-async function fetchMessages(gmail: any, query: string, max: number): Promise<EmailMessage[]> {
+async function fetchMessages(gmail: any, query: string, max: number) {
   const res = await gmail.users.messages.list({
     userId: "me",
     q: query,
     maxResults: max,
   });
   const messages = res.data.messages || [];
-  const results: EmailMessage[] = [];
+  const results: any[] = [];
 
   for (const msg of messages) {
     try {
@@ -101,7 +100,6 @@ function parseComercio(body: string, subject: string): string {
     /tienda:?\s*(.+)/i,
     /establecimiento:?\s*(.+)/i,
     /lugar:?\s*(.+)/i,
-    /en:?\s*(.+)/i,
     /donde:?\s*(.+)/i,
     /transaction at\s+(.+)/i,
     /at\s+(.+?)(?:\s+on|\s*$)/i,
@@ -119,13 +117,6 @@ function parseComercio(body: string, subject: string): string {
   if (subject) {
     const subMatch = subject.match(/(?:compra|pago|retiro|transferencia|cargo)\s+(?:en|de|a)\s+(.+)/i);
     if (subMatch) return subMatch[1].trim();
-  }
-
-  const lines = body.split("\n").map((l) => l.trim()).filter((l) => l.length > 3 && l.length < 60);
-  for (const line of lines) {
-    if (line.match(/^[A-Z\s&]+$/) && !line.match(/BANCO|TARJETA|CUENTA|NUMERO|FECHA|HORA|S\/|PEN/i)) {
-      return line;
-    }
   }
 
   return "Comercio desconocido";
@@ -178,18 +169,35 @@ function parseFechaPeruano(body: string, emailDate: string): Date {
   return new Date();
 }
 
+async function getMongoUserId(session: any, db: any): Promise<ObjectId | null> {
+  if (session.user?.id) {
+    try {
+      return new ObjectId(session.user.id);
+    } catch {}
+  }
+  if (session.user?.email) {
+    const user = await db.collection("users").findOne({ email: session.user.email });
+    if (user) return user._id;
+  }
+  return null;
+}
+
 export async function POST() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    if (!session?.user) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
 
     const client = await clientPromise;
     const db = client.db("gastify");
-    const conn = await db.collection("gmailconnections").findOne({
-      userId: new ObjectId(session.user.id),
-    });
+
+    const mongoUserId = await getMongoUserId(session, db);
+    if (!mongoUserId) {
+      return NextResponse.json({ error: "Usuario no encontrado en MongoDB" }, { status: 404 });
+    }
+
+    const conn = await db.collection("gmailconnections").findOne({ userId: mongoUserId });
     if (!conn) {
       return NextResponse.json({ error: "Gmail no conectado" }, { status: 400 });
     }
@@ -202,14 +210,14 @@ export async function POST() {
 
     const query = `from:(${remitentes}) newer_than:30d`;
     const emails = await fetchMessages(gmail, query, 100);
-    const bancarios = emails.filter((e) => esRemitenteBancario(e.from));
+    const bancarios = emails.filter((e: any) => esRemitenteBancario(e.from));
 
     const existingIds = await db
       .collection("transactions")
-      .find({ userId: new ObjectId(session.user.id), gmailMessageId: { $exists: true } })
+      .find({ userId: mongoUserId, gmailMessageId: { $exists: true } })
       .project({ gmailMessageId: 1 })
       .toArray();
-    const existingSet = new Set(existingIds.map((d) => d.gmailMessageId));
+    const existingSet = new Set(existingIds.map((d: any) => d.gmailMessageId));
 
     let creadas = 0;
     let duplicadas = 0;
@@ -230,7 +238,7 @@ export async function POST() {
       const fecha = parseFechaPeruano(email.body, email.date);
 
       await db.collection("transactions").insertOne({
-        userId: new ObjectId(session.user.id),
+        userId: mongoUserId,
         gmailMessageId: email.id,
         monto,
         comercio,
@@ -249,7 +257,7 @@ export async function POST() {
     }
 
     await db.collection("gmailconnections").updateOne(
-      { userId: new ObjectId(session.user.id) },
+      { userId: mongoUserId },
       { $set: { lastSyncAt: new Date() } }
     );
 
