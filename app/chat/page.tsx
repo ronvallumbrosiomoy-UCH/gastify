@@ -12,10 +12,7 @@ export default function ChatPage() {
   const { status } = useSession();
   const router = useRouter();
   const [mensajes, setMensajes] = useState<Mensaje[]>([
-    {
-      rol: "ia",
-      texto: "¡Hola! Soy tu asesor financiero. Pregúntame sobre tus gastos.",
-    },
+    { rol: "ia", texto: "¡Hola! Soy tu asesor financiero. Pregúntame sobre tus gastos." },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,10 +40,7 @@ export default function ChatPage() {
         body: JSON.stringify({ message: pregunta }),
       });
       const json = await res.json();
-      setMensajes((m) => [
-        ...m,
-        { rol: "ia", texto: json.respuesta || json.error || "Error" },
-      ]);
+      setMensajes((m) => [...m, { rol: "ia", texto: json.respuesta || json.error || "Error" }]);
     } catch {
       setMensajes((m) => [...m, { rol: "ia", texto: "Error de conexión" }]);
     } finally {
@@ -56,8 +50,8 @@ export default function ChatPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center py-40">
-        <div className="w-8 h-8 border-3 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+      <div style={{ display: "flex", justifyContent: "center", padding: "160px 0" }}>
+        <div className="spinner spinner-dark" style={{ width: "32px", height: "32px" }} />
       </div>
     );
   }
@@ -71,48 +65,37 @@ export default function ChatPage() {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto animate-fadeIn">
-      <div className="mb-8">
-        <h1 className="text-[32px] font-extrabold tracking-tight text-graphite-brand flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <div className="animate-fadeIn" style={{ maxWidth: "768px", margin: "0 auto" }}>
+      {/* Header */}
+      <div className="page-header">
+        <h1 className="page-title">
+          <div className="page-icon page-icon-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
           </div>
           Asesor financiero
         </h1>
-        <p className="text-[16px] text-gray-brand mt-2 ml-[52px]">
-          Pregúntale a Gastify sobre tus gastos.
-        </p>
+        <p className="page-subtitle" style={{ marginLeft: "56px" }}>Pregúntale a Gastify sobre tus gastos.</p>
       </div>
 
-      <div className="card-elevated flex flex-col h-[65vh] overflow-hidden">
+      {/* Chat Container */}
+      <div className="card-elevated" style={{ display: "flex", flexDirection: "column", height: "65vh", overflow: "hidden" }}>
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div style={{ flex: 1, overflowY: "auto", padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
           {mensajes.map((m, i) => (
-            <div
-              key={i}
-              className={`flex ${m.rol === "usuario" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[80%] px-5 py-3.5 text-[14px] leading-relaxed rounded-2xl ${
-                  m.rol === "usuario"
-                    ? "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white rounded-br-md shadow-lg shadow-emerald-500/20"
-                    : "bg-white/80 text-graphite-brand rounded-bl-md border border-white/60"
-                }`}
-              >
+            <div key={i} style={{ display: "flex", justifyContent: m.rol === "usuario" ? "flex-end" : "flex-start" }}>
+              <div className={`chat-bubble ${m.rol === "usuario" ? "chat-bubble-user" : "chat-bubble-ai"}`}>
                 {m.texto}
               </div>
             </div>
           ))}
           {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white/80 rounded-2xl rounded-bl-md px-5 py-3.5 border border-white/60">
-                <span className="inline-flex gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" />
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.15s]" />
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.3s]" />
-                </span>
+            <div style={{ display: "flex", justifyContent: "flex-start" }}>
+              <div className="chat-typing">
+                <div className="chat-typing-dot" />
+                <div className="chat-typing-dot" />
+                <div className="chat-typing-dot" />
               </div>
             </div>
           )}
@@ -120,14 +103,10 @@ export default function ChatPage() {
         </div>
 
         {/* Suggestions */}
-        <div className="px-6 pb-4">
-          <div className="flex gap-2 flex-wrap">
+        <div style={{ padding: "0 24px 16px" }}>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             {sugerencias.map((s) => (
-              <button
-                key={s}
-                onClick={() => setInput(s)}
-                className="h-9 px-4 rounded-xl text-[13px] font-medium bg-gradient-to-r from-purple-50 to-purple-100/50 text-purple-600 hover:from-purple-100 hover:to-purple-150 transition-all border border-purple-100"
-              >
+              <button key={s} onClick={() => setInput(s)} className="suggestion-chip">
                 {s}
               </button>
             ))}
@@ -135,19 +114,10 @@ export default function ChatPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-white/20 p-4 bg-white/30">
-          <form onSubmit={enviar} className="flex gap-3">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Pregúntale a tu asesor..."
-              className="input flex-1 h-12"
-            />
-            <button
-              type="submit"
-              disabled={loading || !input.trim()}
-              className="btn btn-primary h-12 px-6 disabled:opacity-40"
-            >
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.4)", padding: "16px", background: "rgba(255,255,255,0.3)" }}>
+          <form onSubmit={enviar} style={{ display: "flex", gap: "12px" }}>
+            <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Pregúntale a tu asesor..." className="input" style={{ flex: 1, height: "48px" }} />
+            <button type="submit" disabled={loading || !input.trim()} className="btn btn-primary" style={{ height: "48px", padding: "0 24px", opacity: loading || !input.trim() ? 0.4 : 1 }}>
               {loading ? <span className="spinner" /> : "Enviar"}
             </button>
           </form>

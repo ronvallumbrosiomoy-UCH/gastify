@@ -31,9 +31,7 @@ export default function TransactionsPage() {
   const [editingCat, setEditingCat] = useState<string | null>(null);
 
   const fetchTransactions = useCallback(async () => {
-    const res = await fetch(
-      `/api/transactions${categoriaFilter ? `?categoria=${categoriaFilter}` : ""}`
-    );
+    const res = await fetch(`/api/transactions${categoriaFilter ? `?categoria=${categoriaFilter}` : ""}`);
     if (res.ok) {
       setTransactions(await res.json());
     }
@@ -62,8 +60,8 @@ export default function TransactionsPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center py-40">
-        <div className="w-8 h-8 border-3 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+      <div style={{ display: "flex", justifyContent: "center", padding: "160px 0" }}>
+        <div className="spinner spinner-dark" style={{ width: "32px", height: "32px" }} />
       </div>
     );
   }
@@ -74,47 +72,26 @@ export default function TransactionsPage() {
     .reduce((s, t) => s + t.monto, 0);
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="animate-fadeIn" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="page-header" style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: "16px" }}>
         <div>
-          <h1 className="text-[32px] font-extrabold tracking-tight text-graphite-brand">
-            Transacciones
-          </h1>
-          <p className="text-[16px] text-gray-brand mt-1">
-            Tus gastos detectados automáticamente.
-          </p>
+          <h1 className="page-title">Transacciones</h1>
+          <p className="page-subtitle">Tus gastos detectados automáticamente.</p>
         </div>
-        <div className="kpi px-6 py-4 inline-flex flex-col items-end">
-          <p className="text-[12px] font-semibold text-gray-brand uppercase tracking-wider">Total gastos</p>
-          <p className="text-[24px] font-extrabold tracking-tight text-graphite-brand">
-            {fmtSoles(total)}
-          </p>
+        <div className="kpi" style={{ padding: "16px 24px", display: "inline-flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <p className="kpi-label" style={{ marginBottom: "4px", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Total gastos</p>
+          <p className="kpi-value" style={{ fontSize: "24px" }}>{fmtSoles(total)}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-2">
-        <button
-          onClick={() => setCategoriaFilter("")}
-          className={`h-10 px-4 rounded-xl text-[14px] font-semibold transition-all duration-200 ${
-            !categoriaFilter
-              ? "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white shadow-lg shadow-emerald-500/25"
-              : "bg-white/60 text-gray-brand hover:bg-white hover:text-graphite-brand border border-white/40"
-          }`}
-        >
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+        <button onClick={() => setCategoriaFilter("")} className={`filter-chip ${!categoriaFilter ? "filter-chip-active" : "filter-chip-inactive"}`}>
           Todas
         </button>
         {CATEGORIAS_BASE.map((c) => (
-          <button
-            key={c}
-            onClick={() => setCategoriaFilter(categoriaFilter === c ? "" : c)}
-            className={`h-10 px-4 rounded-xl text-[14px] font-semibold transition-all duration-200 ${
-              categoriaFilter === c
-                ? "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white shadow-lg shadow-emerald-500/25"
-                : "bg-white/60 text-gray-brand hover:bg-white hover:text-graphite-brand border border-white/40"
-            }`}
-          >
+          <button key={c} onClick={() => setCategoriaFilter(categoriaFilter === c ? "" : c)} className={`filter-chip ${categoriaFilter === c ? "filter-chip-active" : "filter-chip-inactive"}`}>
             {c}
           </button>
         ))}
@@ -122,85 +99,65 @@ export default function TransactionsPage() {
 
       {/* Content */}
       {loading ? (
-        <div className="flex items-center justify-center py-32">
-          <div className="w-8 h-8 border-3 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+        <div style={{ display: "flex", justifyContent: "center", padding: "128px 0" }}>
+          <div className="spinner spinner-dark" style={{ width: "32px", height: "32px" }} />
         </div>
       ) : transactions.length === 0 ? (
-        <div className="card-elevated p-16 text-center animate-scaleIn">
-          <div className="illustration inline-flex mb-6">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-purple-500/30 relative z-10">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-              </svg>
-            </div>
+        <div className="card-elevated empty-state animate-scaleIn">
+          <div className="empty-state-icon empty-state-icon-purple">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ position: "relative", zIndex: 10 }}>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
           </div>
-          <h2 className="text-[24px] font-extrabold tracking-tight text-graphite-brand mb-3">
-            Sin transacciones
-          </h2>
-          <p className="text-[16px] text-gray-brand max-w-sm mx-auto">
-            Conecta tu Gmail o usa &quot;Sincronizar&quot; para detectar gastos.
-          </p>
+          <h2>Sin transacciones</h2>
+          <p>Conecta tu Gmail o usa &quot;Sincronizar&quot; para detectar gastos.</p>
         </div>
       ) : (
         <div className="table-container">
-          <div className="overflow-x-auto">
-            <table className="w-full text-[14px]">
-              <thead>
-                <tr className="border-b border-black/5">
-                  <th className="text-left px-6 py-4 text-[12px] font-bold text-gray-brand uppercase tracking-wider">Fecha</th>
-                  <th className="text-left px-6 py-4 text-[12px] font-bold text-gray-brand uppercase tracking-wider">Comercio</th>
-                  <th className="text-left px-6 py-4 text-[12px] font-bold text-gray-brand uppercase tracking-wider">Categoría</th>
-                  <th className="text-right px-6 py-4 text-[12px] font-bold text-gray-brand uppercase tracking-wider">Monto</th>
-                  <th className="text-left px-6 py-4 text-[12px] font-bold text-gray-brand uppercase tracking-wider">Banco</th>
-                  <th className="px-6 py-4"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((t) => (
-                  <tr key={t._id} className="table-row">
-                    <td className="px-6 py-4 text-gray-brand">{fmtFecha(t.fecha)}</td>
-                    <td className="px-6 py-4 font-semibold text-graphite-brand">{t.comercio}</td>
-                    <td className="px-6 py-4">
-                      {editingCat === t._id ? (
-                        <select
-                          value={t.categoria}
-                          onChange={(e) => updateCategoria(t._id, e.target.value)}
-                          onBlur={() => setEditingCat(null)}
-                          autoFocus
-                          className="input h-8 px-2 text-[13px] w-32"
-                        >
-                          {CATEGORIAS_BASE.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                      ) : (
-                        <button
-                          onClick={() => setEditingCat(t._id)}
-                          className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-600 text-[12px] font-semibold hover:bg-purple-100 transition-colors"
-                        >
-                          {t.categoria}
-                        </button>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right font-bold text-graphite-brand tabular-nums">
-                      {t.tipo === "ingreso" ? "+" : "-"}{fmtSoles(t.monto)}
-                    </td>
-                    <td className="px-6 py-4 text-gray-brand">{t.banco || "—"}</td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => deleteTransaction(t._id)}
-                        className="text-gray-brand/40 hover:text-red-500 transition-colors p-1"
-                      >
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                        </svg>
+          <table style={{ width: "100%", fontSize: "14px" }}>
+            <thead>
+              <tr className="table-header">
+                <th>Fecha</th>
+                <th>Comercio</th>
+                <th>Categoría</th>
+                <th style={{ textAlign: "right" }}>Monto</th>
+                <th>Banco</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map((t) => (
+                <tr key={t._id} className="table-row">
+                  <td style={{ color: "var(--gray-500)" }}>{fmtFecha(t.fecha)}</td>
+                  <td style={{ fontWeight: 600, color: "var(--gray-900)" }}>{t.comercio}</td>
+                  <td>
+                    {editingCat === t._id ? (
+                      <select value={t.categoria} onChange={(e) => updateCategoria(t._id, e.target.value)} onBlur={() => setEditingCat(null)} autoFocus className="input" style={{ height: "32px", padding: "0 8px", fontSize: "13px", width: "128px" }}>
+                        {CATEGORIAS_BASE.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <button onClick={() => setEditingCat(t._id)} className="badge badge-purple" style={{ fontSize: "12px", padding: "4px 10px" }}>
+                        {t.categoria}
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    )}
+                  </td>
+                  <td style={{ textAlign: "right", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
+                    {t.tipo === "ingreso" ? "+" : "-"}{fmtSoles(t.monto)}
+                  </td>
+                  <td style={{ color: "var(--gray-500)" }}>{t.banco || "—"}</td>
+                  <td>
+                    <button onClick={() => deleteTransaction(t._id)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gray-400)", transition: "color 0.2s" }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

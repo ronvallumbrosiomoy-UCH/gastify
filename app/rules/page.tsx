@@ -50,116 +50,94 @@ export default function RulesPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center py-40">
-        <div className="w-8 h-8 border-3 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+      <div style={{ display: "flex", justifyContent: "center", padding: "160px 0" }}>
+        <div className="spinner spinner-dark" style={{ width: "32px", height: "32px" }} />
       </div>
     );
   }
   if (status === "unauthenticated") return null;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fadeIn">
-      <div>
-        <h1 className="text-[32px] font-extrabold tracking-tight text-graphite-brand flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/25">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <div className="animate-fadeIn" style={{ maxWidth: "768px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
+      {/* Header */}
+      <div className="page-header">
+        <h1 className="page-title">
+          <div className="page-icon page-icon-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
             </svg>
           </div>
           Reglas personalizadas
         </h1>
-        <p className="text-[16px] text-gray-brand mt-2 ml-[52px]">
-          Clasifica gastos como tú quieres. Prioridad sobre la IA.
-        </p>
+        <p className="page-subtitle" style={{ marginLeft: "56px" }}>Clasifica gastos como tú quieres. Prioridad sobre la IA.</p>
       </div>
 
       {/* Form */}
-      <div className="card p-6">
-        <h2 className="text-[16px] font-bold text-graphite-brand mb-5 flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
-            <svg className="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div className="card" style={{ padding: "24px" }}>
+        <h2 style={{ fontSize: "16px", fontWeight: 700, color: "var(--gray-900)", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
+          <div className="kpi-icon kpi-icon-green" style={{ width: "28px", height: "28px" }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "14px", height: "14px" }}>
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
           </div>
           Nueva regla
         </h2>
-        <form onSubmit={addRule} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">Nombre</label>
-              <input
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                className="input"
-                placeholder="Ej: Gastos en Rappi"
-                required
-              />
+        <form onSubmit={addRule}>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Nombre</label>
+              <input value={nombre} onChange={(e) => setNombre(e.target.value)} className="input" placeholder="Ej: Gastos en Rappi" required />
             </div>
-            <div>
-              <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">Categoría</label>
-              <select
-                value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
-                className="input"
-              >
+            <div className="form-group">
+              <label className="form-label">Categoría</label>
+              <select value={categoria} onChange={(e) => setCategoria(e.target.value)} className="input">
                 {CATEGORIAS_BASE.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </div>
           </div>
-          <div>
-            <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">Condición</label>
-            <input
-              value={condicion}
-              onChange={(e) => setCondicion(e.target.value)}
-              className="input"
-              placeholder="Ej: monto < 5, comercio contiene rappi"
-              required
-            />
+          <div className="form-group">
+            <label className="form-label">Condición</label>
+            <input value={condicion} onChange={(e) => setCondicion(e.target.value)} className="input" placeholder="Ej: monto < 5, comercio contiene rappi" required />
           </div>
-          <button type="submit" disabled={saving} className="btn btn-primary disabled:opacity-50">
+          <button type="submit" disabled={saving} className="btn btn-primary" style={{ opacity: saving ? 0.5 : 1 }}>
             {saving ? <span className="spinner" /> : "Agregar regla"}
           </button>
         </form>
       </div>
 
       {/* Rules list */}
-      <div className="card p-6">
-        <h2 className="text-[16px] font-bold text-graphite-brand mb-5 flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center">
-            <svg className="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div className="card" style={{ padding: "24px" }}>
+        <h2 style={{ fontSize: "16px", fontWeight: 700, color: "var(--gray-900)", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
+          <div className="kpi-icon kpi-icon-purple" style={{ width: "28px", height: "28px" }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: "14px", height: "14px" }}>
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
             </svg>
           </div>
           Tus reglas ({rules.length})
         </h2>
         {loading ? (
-          <div className="py-12 flex justify-center">
-            <div className="w-8 h-8 border-3 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+          <div style={{ display: "flex", justifyContent: "center", padding: "48px 0" }}>
+            <div className="spinner spinner-dark" style={{ width: "32px", height: "32px" }} />
           </div>
         ) : rules.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <div style={{ textAlign: "center", padding: "48px 0" }}>
+            <div style={{ width: "64px", height: "64px", borderRadius: "var(--radius-xl)", background: "var(--gray-100)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
             </div>
-            <p className="text-gray-brand text-[14px]">
-              Aún no tienes reglas.
-            </p>
+            <p style={{ color: "var(--gray-500)", fontSize: "14px" }}>Aún no tienes reglas.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {rules.map((r) => (
-              <div
-                key={r._id}
-                className="flex items-center justify-between p-4 rounded-xl bg-white/50 border border-white/40 hover:bg-white/80 hover:border-white/60 transition-all"
-              >
+              <div key={r._id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", borderRadius: "var(--radius-lg)", background: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.4)", transition: "all 0.2s" }}>
                 <div>
-                  <p className="text-[14px] font-semibold text-graphite-brand">{r.nombre}</p>
-                  <p className="text-[13px] text-gray-brand mt-0.5">
-                    Si <span className="font-medium text-graphite-brand">{r.condicion}</span> → <span className="font-medium text-purple-600">{r.categoria}</span>
+                  <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--gray-900)" }}>{r.nombre}</p>
+                  <p style={{ fontSize: "13px", color: "var(--gray-500)", marginTop: "2px" }}>
+                    Si <span style={{ fontWeight: 500, color: "var(--gray-900)" }}>{r.condicion}</span> → <span style={{ fontWeight: 500, color: "var(--purple-500)" }}>{r.categoria}</span>
                   </p>
                 </div>
                 <span className="badge">{r.categoria}</span>

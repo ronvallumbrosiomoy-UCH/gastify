@@ -51,115 +51,69 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-apple flex items-center justify-center px-4 relative">
-      {/* Floating decorative elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-400/20 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/10 rounded-full blur-3xl" />
+    <div className="bg-apple" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+      {/* Floating blobs */}
+      <div className="floating-blob blob-green" style={{ width: "300px", height: "300px", top: "80px", left: "40px", animationDelay: "0s" }} />
+      <div className="floating-blob blob-purple" style={{ width: "400px", height: "400px", bottom: "80px", right: "40px", animationDelay: "1s" }} />
+      <div className="floating-blob blob-blue" style={{ width: "500px", height: "500px", top: "50%", left: "50%", transform: "translate(-50%, -50%)", animationDelay: "2s" }} />
 
-      <div className="w-full max-w-[420px] relative z-10">
+      <div className="animate-fadeIn" style={{ width: "100%", maxWidth: "420px", position: "relative", zIndex: 10 }}>
         {/* Logo + Heading */}
-        <div className="text-center mb-10 animate-fadeIn">
-          <div className="illustration inline-flex mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-500/30 relative z-10">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="animate-fadeIn" style={{ textAlign: "center", marginBottom: "40px" }}>
+          <div style={{ display: "inline-flex", marginBottom: "24px", position: "relative" }}>
+            <div className="empty-state-icon empty-state-icon-green" style={{ width: "64px", height: "64px" }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "relative", zIndex: 10 }}>
                 <line x1="12" y1="1" x2="12" y2="23" />
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             </div>
           </div>
-          <h1 className="text-[32px] font-extrabold tracking-tight text-graphite-brand mb-2">
-            Bienvenido a{" "}
-            <span className="gradient-text">Gastify</span>
+          <h1 style={{ fontSize: "32px", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--gray-900)", marginBottom: "8px" }}>
+            Bienvenido a <span className="gradient-text">Gastify</span>
           </h1>
-          <p className="text-[16px] text-gray-brand">
-            Tu dinero, tu control.
-          </p>
+          <p style={{ fontSize: "16px", color: "var(--gray-500)" }}>Tu dinero, tu control.</p>
         </div>
 
         {/* Card */}
-        <div className="card-elevated p-8 animate-slideUp">
+        <div className="card-elevated animate-slideUp" style={{ padding: "32px" }}>
           {/* Segmented Control */}
-          <div className="seg-control mb-6">
-            <button
-              onClick={() => { setMode("login"); setError(""); }}
-              className={mode === "login" ? "active" : ""}
-            >
+          <div className="seg-control" style={{ marginBottom: "24px" }}>
+            <button onClick={() => { setMode("login"); setError(""); }} className={mode === "login" ? "active" : ""}>
               Iniciar sesión
             </button>
-            <button
-              onClick={() => { setMode("signup"); setError(""); }}
-              className={mode === "signup" ? "active" : ""}
-            >
+            <button onClick={() => { setMode("signup"); setError(""); }} className={mode === "signup" ? "active" : ""}>
               Registrarse
             </button>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[14px] font-medium animate-slideUp flex items-center gap-2">
-              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="alert-card alert-red animate-slideUp" style={{ marginBottom: "20px" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
-              {error}
+              <span style={{ fontSize: "14px", fontWeight: 500 }}>{error}</span>
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit}>
             {mode === "signup" && (
-              <div className="animate-fadeIn">
-                <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">
-                  Nombre
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="input"
-                  placeholder="Tu nombre"
-                  required
-                />
+              <div className="form-group animate-fadeIn">
+                <label className="form-label">Nombre</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input" placeholder="Tu nombre" required />
               </div>
             )}
-            <div>
-              <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input"
-                placeholder="tu@email.com"
-                required
-              />
+            <div className="form-group">
+              <label className="form-label">Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" placeholder="tu@email.com" required />
             </div>
-            <div>
-              <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input"
-                placeholder="••••••••"
-                required
-              />
+            <div className="form-group">
+              <label className="form-label">Contraseña</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" placeholder="••••••••" required />
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary w-full mt-2 disabled:opacity-50"
-            >
-              {loading ? (
-                <span className="spinner" />
-              ) : mode === "login" ? (
-                "Entrar"
-              ) : (
-                "Crear cuenta"
-              )}
+            <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "100%", marginTop: "8px", opacity: loading ? 0.5 : 1 }}>
+              {loading ? <span className="spinner" /> : mode === "login" ? "Entrar" : "Crear cuenta"}
             </button>
           </form>
 
@@ -178,15 +132,11 @@ export default function LoginPage() {
           </button>
 
           {/* Terms */}
-          <p className="text-center text-[12px] text-gray-brand mt-6 leading-relaxed">
+          <p style={{ textAlign: "center", fontSize: "12px", color: "var(--gray-500)", marginTop: "24px", lineHeight: 1.6 }}>
             Al continuar, aceptas nuestros{" "}
-            <a href="/terminos" className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
-              Términos
-            </a>{" "}
+            <a href="/terminos" style={{ color: "var(--green-600)", fontWeight: 600, textDecoration: "none" }}>Términos</a>{" "}
             y{" "}
-            <a href="/privacidad" className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
-              Privacidad
-            </a>
+            <a href="/privacidad" style={{ color: "var(--green-600)", fontWeight: 600, textDecoration: "none" }}>Privacidad</a>
           </p>
         </div>
       </div>
