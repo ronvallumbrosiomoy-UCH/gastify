@@ -66,13 +66,25 @@ export default function DashboardPage() {
 
   async function syncGmail() {
     setSyncing(true);
-    const res = await fetch("/api/gmail/sync", { method: "POST" });
-    const json = await res.json();
-    if (res.ok) {
-      setGmailStatus(`Gmail sincronizado: ${json.creadas} transacciones nuevas`);
-      fetchInsights();
-    } else {
-      setGmailStatus(`Error: ${json.error}`);
+    setGmailStatus(null);
+    try {
+      const res = await fetch("/api/gmail/sync", { method: "POST" });
+      const json = await res.json();
+      if (res.ok) {
+        const parts = [];
+        if (json.creadas > 0) parts.push(`${json.creadas} nuevas`);
+        if (json.duplicadas > 0) parts.push(`${json.duplicadas} duplicadas omitidas`);
+        if (json.procesados === 0) parts.push("No se encontraron emails bancarios en los últimos 30 días");
+        setGmailStatus(parts.length > 0
+          ? `Sincronización completa: ${parts.join(" | ")}`
+          : "Sincronización completa: sin cambios"
+        );
+        fetchInsights();
+      } else {
+        setGmailStatus(`Error: ${json.error}`);
+      }
+    } catch {
+      setGmailStatus("Error de conexión al sincronizar");
     }
     setSyncing(false);
   }
@@ -146,7 +158,7 @@ export default function DashboardPage() {
             </svg>
           </div>
           <h2>Conecta tu Gmail</h2>
-          <p>Gastify detectará automáticamente tus gastos de bancos peruanos como BCP, BBVA, Interbank y Scotiabank.</p>
+          <p>Gastify detectará automáticamente tus gastos de BCP, BBVA, Interbank, Scotiabank, MiBank, Yape y Plin.</p>
           <button onClick={connectGmail} className="btn btn-primary" style={{ marginTop: "32px" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>

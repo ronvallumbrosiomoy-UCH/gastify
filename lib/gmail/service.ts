@@ -39,5 +39,26 @@ export async function getGmailClient(accessToken: string, refreshToken?: string)
     access_token: accessToken,
     refresh_token: refreshToken,
   });
+
+  client.on("tokens", async (tokens) => {
+    if (tokens.access_token) {
+      try {
+        const { default: clientPromise } = await import("@/lib/mongodb");
+        const { ObjectId } = await import("mongodb");
+        const mdb = await clientPromise;
+        const db = mdb.db("gastify");
+        const conn = await db.collection("gmailconnections").findOne({
+          "accessToken": accessToken,
+        });
+        if (conn) {
+          await db.collection("gmailconnections").updateOne(
+            { _id: conn._id },
+            { $set: { accessToken: tokens.access_token } }
+          );
+        }
+      } catch {}
+    }
+  });
+
   return google.gmail({ version: "v1", auth: client });
 }
