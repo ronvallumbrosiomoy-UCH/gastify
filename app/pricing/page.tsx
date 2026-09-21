@@ -35,82 +35,122 @@ export default function PricingPage() {
     new URLSearchParams(window.location.search).get("premium") === "cancelled";
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-graphite-brand">Hazte Premium</h1>
-        <p className="text-text-secondary mt-2">
+    <div className="max-w-5xl mx-auto animate-fadeIn">
+      {/* Header */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-bold text-graphite-brand tracking-tight">
+          Hazte Premium
+        </h1>
+        <p className="text-xl text-text-secondary mt-4 max-w-2xl mx-auto">
           Desbloquea el asesor financiero completo con IA.
         </p>
         {cancelled && (
-          <div className="mt-4 p-3 rounded-xl bg-amber-50 text-amber-brand text-sm">
+          <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-100 text-amber-700 text-sm animate-slideUp">
             El pago fue cancelado. Puedes intentarlo de nuevo cuando quieras.
           </div>
         )}
       </div>
 
+      {/* Error */}
       {error && (
-        <div className="mb-6 p-3 rounded-xl bg-red-50 text-red-brand text-sm text-center">
+        <div className="mb-8 p-4 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm text-center animate-slideUp">
           {error}
         </div>
       )}
 
+      {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Plan mensual */}
-        <div className="bg-card border border-card-border rounded-3xl p-8 flex flex-col">
-          <h2 className="text-xl font-bold text-graphite-brand">Mensual</h2>
-          <p className="text-4xl font-bold text-graphite-brand mt-4">
-            S/ 19.90
-            <span className="text-base font-normal text-text-secondary">/mes</span>
-          </p>
-          <ul className="mt-6 space-y-3 flex-1">
-            {["Registro automático de gastos", "Insights de IA ilimitados", "Chat con asesor financiero", "Alertas por categoría"].map((f) => (
-              <li key={f} className="flex items-center gap-2 text-sm text-graphite-brand">
-                <span className="text-emerald-brand">✓</span> {f}
+        {/* Monthly Plan */}
+        <div className="apple-card p-8 flex flex-col">
+          <h2 className="text-2xl font-bold text-graphite-brand tracking-tight">Mensual</h2>
+          <div className="mt-6">
+            <span className="text-5xl font-bold text-graphite-brand tracking-tight">S/ 19.90</span>
+            <span className="text-lg text-text-secondary ml-1">/mes</span>
+          </div>
+          <ul className="mt-8 space-y-4 flex-1">
+            {[
+              "Registro automático de gastos",
+              "Insights de IA ilimitados",
+              "Chat con asesor financiero",
+              "Alertas por categoría",
+            ].map((f) => (
+              <li key={f} className="flex items-center gap-3 text-base text-graphite-brand">
+                <span className="w-6 h-6 rounded-full bg-emerald-brand/10 flex items-center justify-center">
+                  <span className="text-emerald-brand text-sm">✓</span>
+                </span>
+                {f}
               </li>
             ))}
           </ul>
           <button
             onClick={() => iniciarCheckout("monthly")}
             disabled={loading === "monthly"}
-            className="mt-8 w-full py-3 rounded-xl bg-graphite-brand text-white font-medium hover:bg-graphite-brand/90 disabled:opacity-50 transition-all"
+            className="apple-button apple-button-secondary w-full mt-8"
           >
-            {loading === "monthly" ? "Procesando..." : "Empezar mensual"}
+            {loading === "monthly" ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-graphite-brand/30 border-t-graphite-brand rounded-full animate-spin" />
+                Procesando...
+              </span>
+            ) : (
+              "Empezar mensual"
+            )}
           </button>
         </div>
 
-        {/* Plan anual */}
-        <div className="bg-gradient-to-b from-mint-brand/60 to-purple-brand/10 border-2 border-emerald-brand rounded-3xl p-8 flex flex-col relative">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-emerald-brand text-white text-xs font-bold">
+        {/* Annual Plan */}
+        <div className="apple-card p-8 flex flex-col relative border-2 border-emerald-brand bg-gradient-to-b from-emerald-brand/5 to-transparent">
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-emerald-brand text-white text-sm font-bold shadow-md">
             50% OFF
           </div>
-          <h2 className="text-xl font-bold text-graphite-brand">Anual</h2>
-          <p className="text-4xl font-bold text-graphite-brand mt-4">
-            S/ 9.90
-            <span className="text-base font-normal text-text-secondary">/mes</span>
-          </p>
-          <p className="text-sm text-emerald-brand mt-1">
+          <h2 className="text-2xl font-bold text-graphite-brand tracking-tight">Anual</h2>
+          <div className="mt-6">
+            <span className="text-5xl font-bold text-graphite-brand tracking-tight">S/ 9.90</span>
+            <span className="text-lg text-text-secondary ml-1">/mes</span>
+          </div>
+          <p className="text-sm text-emerald-brand mt-2 font-medium">
             Facturado S/ 118.80 al año. Ahorra 50%.
           </p>
-          <ul className="mt-6 space-y-3 flex-1">
-            {["Todo lo del plan mensual", "2 meses gratis", "Prioridad en soporte", "Historial ilimitado"].map((f) => (
-              <li key={f} className="flex items-center gap-2 text-sm text-graphite-brand">
-                <span className="text-emerald-brand">✓</span> {f}
+          <ul className="mt-8 space-y-4 flex-1">
+            {[
+              "Todo lo del plan mensual",
+              "2 meses gratis",
+              "Prioridad en soporte",
+              "Historial ilimitado",
+            ].map((f) => (
+              <li key={f} className="flex items-center gap-3 text-base text-graphite-brand">
+                <span className="w-6 h-6 rounded-full bg-emerald-brand/10 flex items-center justify-center">
+                  <span className="text-emerald-brand text-sm">✓</span>
+                </span>
+                {f}
               </li>
             ))}
           </ul>
           <button
             onClick={() => iniciarCheckout("annual")}
             disabled={loading === "annual"}
-            className="mt-8 w-full py-3 rounded-xl bg-emerald-brand text-white font-medium hover:bg-emerald-brand/90 disabled:opacity-50 transition-all"
+            className="apple-button apple-button-primary w-full mt-8"
           >
-            {loading === "annual" ? "Procesando..." : "Empezar anual"}
+            {loading === "annual" ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Procesando...
+              </span>
+            ) : (
+              "Empezar anual"
+            )}
           </button>
         </div>
       </div>
 
-      <p className="text-center text-xs text-text-secondary mt-8">
+      {/* Footer Note */}
+      <p className="text-center text-sm text-text-secondary mt-12">
         14 días gratis sin pedir tarjeta. Cancela cuando quieras.
-        {session?.user?.role === "premium" && <span className="block mt-2 text-emerald-brand font-medium">✓ Ya eres Premium</span>}
+        {session?.user?.role === "premium" && (
+          <span className="block mt-3 text-emerald-brand font-semibold text-base">
+            ✓ Ya eres Premium
+          </span>
+        )}
       </p>
     </div>
   );

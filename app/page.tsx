@@ -13,11 +13,21 @@ export default function Home() {
   }, [status, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-5xl mb-4">💰</div>
-        <h1 className="text-2xl font-bold text-graphite-brand">Gastify</h1>
-        <p className="text-text-secondary mt-2">Cargando tu espacio financiero...</p>
+    <div className="min-h-screen flex items-center justify-center gradient-mesh">
+      <div className="text-center animate-fadeIn">
+        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-emerald-brand to-emerald-brand/80 flex items-center justify-center mx-auto mb-8 shadow-xl">
+          <span className="text-5xl">💰</span>
+        </div>
+        <h1 className="text-4xl font-bold text-graphite-brand tracking-tight mb-4">
+          Gastify
+        </h1>
+        <p className="text-xl text-text-secondary mb-8">
+          Tu dinero, tu control.
+        </p>
+        <div className="flex items-center justify-center gap-2">
+          <div className="w-3 h-3 border-2 border-emerald-brand/20 border-t-emerald-brand rounded-full animate-spin" />
+          <p className="text-text-secondary">Cargando tu espacio financiero...</p>
+        </div>
       </div>
     </div>
   );

@@ -78,96 +78,140 @@ export default function DashboardPage() {
   }
 
   if (status === "loading") {
-    return <div className="text-center py-20 text-text-secondary">Cargando Gastify...</div>;
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-brand/20 border-t-emerald-brand rounded-full animate-spin" />
+          <p className="text-text-secondary">Cargando Gastify...</p>
+        </div>
+      </div>
+    );
   }
   if (!session) return null;
 
   const fmtMes = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fadeIn">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-graphite-brand">Hola, {session.user?.name} 👋</h1>
-          <p className="text-text-secondary mt-1">
+          <h1 className="text-3xl font-bold text-graphite-brand tracking-tight">
+            Hola, {session.user?.name} 👋
+          </h1>
+          <p className="text-text-secondary mt-2 text-lg">
             {data ? `Resumen de ${fmtMes[data.mes]} ${data.anio}` : "Conecta tu Gmail para empezar."}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             onClick={connectGmail}
-            className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium hover:bg-surface transition-all"
+            className="apple-button apple-button-secondary"
           >
-            📧 Conectar Gmail
+            <span className="mr-2">📧</span> Conectar Gmail
           </button>
           <button
             onClick={syncGmail}
             disabled={syncing}
-            className="px-4 py-2 rounded-xl bg-emerald-brand text-white text-sm font-medium hover:bg-emerald-brand/90 disabled:opacity-50 transition-all"
+            className="apple-button apple-button-primary disabled:opacity-50"
           >
-            {syncing ? "Sincronizando..." : "⟳ Sincronizar"}
+            {syncing ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Sincronizando...
+              </span>
+            ) : (
+              <>
+                <span className="mr-2">⟳</span> Sincronizar
+              </>
+            )}
           </button>
         </div>
       </div>
 
+      {/* Gmail Status */}
       {gmailStatus && (
-        <div className={`p-3 rounded-xl text-sm ${gmailStatus.startsWith("Error") ? "bg-red-50 text-red-brand" : "bg-mint-brand text-graphite-brand"}`}>
+        <div className={`p-4 rounded-2xl text-sm font-medium animate-slideUp ${
+          gmailStatus.startsWith("Error") 
+            ? "bg-red-50 text-red-600 border border-red-100" 
+            : "bg-emerald-50 text-emerald-700 border border-emerald-100"
+        }`}>
           {gmailStatus}
         </div>
       )}
 
       {loading ? (
-        <div className="text-center py-20 text-text-secondary">Cargando datos...</div>
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-emerald-brand/20 border-t-emerald-brand rounded-full animate-spin" />
+            <p className="text-text-secondary">Cargando datos...</p>
+          </div>
+        </div>
       ) : !data ? (
-        <div className="bg-card border border-card-border rounded-2xl p-10 text-center">
-          <div className="text-4xl mb-4">💡</div>
-          <h2 className="text-xl font-semibold text-graphite-brand mb-2">Conecta tu Gmail</h2>
-          <p className="text-text-secondary mb-6 max-w-md mx-auto">
+        /* Empty State */
+        <div className="glass rounded-3xl p-12 text-center animate-fadeIn">
+          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-brand/20 to-mint-brand/30 flex items-center justify-center mx-auto mb-6">
+            <span className="text-4xl">💡</span>
+          </div>
+          <h2 className="text-2xl font-bold text-graphite-brand mb-3 tracking-tight">
+            Conecta tu Gmail
+          </h2>
+          <p className="text-text-secondary mb-8 max-w-md mx-auto text-lg leading-relaxed">
             Gastify detectará automáticamente tus gastos de bancos como BCP, BBVA, Interbank y Scotiabank.
           </p>
           <button
             onClick={connectGmail}
-            className="px-6 py-3 rounded-xl bg-emerald-brand text-white font-medium hover:bg-emerald-brand/90 transition-all"
+            className="apple-button apple-button-primary"
           >
-            📧 Conectar Gmail
+            <span className="mr-2">📧</span> Conectar Gmail
           </button>
         </div>
       ) : (
         <>
           {/* KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-card border border-card-border rounded-xl p-5">
-              <p className="text-text-secondary text-xs">Gasto del mes</p>
-              <p className="text-2xl font-bold text-graphite-brand mt-1">{fmtSoles(data.totalActual)}</p>
-              <p className={`text-xs mt-1 ${data.pct <= 0 ? "text-emerald-brand" : "text-red-brand"}`}>
+            <div className="apple-card p-6">
+              <p className="text-text-secondary text-sm font-medium">Gasto del mes</p>
+              <p className="text-3xl font-bold text-graphite-brand mt-2 tracking-tight">
+                {fmtSoles(data.totalActual)}
+              </p>
+              <p className={`text-sm mt-2 font-medium ${data.pct <= 0 ? "text-emerald-brand" : "text-red-brand"}`}>
                 {data.pct <= 0 ? "↓" : "↑"} {Math.abs(data.pct).toFixed(0)}% vs mes anterior
               </p>
             </div>
-            <div className="bg-card border border-card-border rounded-xl p-5">
-              <p className="text-text-secondary text-xs">Gasto diario promedio</p>
-              <p className="text-2xl font-bold text-graphite-brand mt-1">{fmtSoles(data.diarioPromedio)}</p>
-              <p className="text-xs text-text-secondary mt-1">promedio diario</p>
+            <div className="apple-card p-6">
+              <p className="text-text-secondary text-sm font-medium">Gasto diario promedio</p>
+              <p className="text-3xl font-bold text-graphite-brand mt-2 tracking-tight">
+                {fmtSoles(data.diarioPromedio)}
+              </p>
+              <p className="text-sm text-text-secondary mt-2">promedio diario</p>
             </div>
-            <div className="bg-card border border-card-border rounded-xl p-5">
-              <p className="text-text-secondary text-xs">Categorías</p>
-              <p className="text-2xl font-bold text-purple-brand mt-1">{data.categorias.length}</p>
-              <p className="text-xs text-text-secondary mt-1">con gastos este mes</p>
+            <div className="apple-card p-6">
+              <p className="text-text-secondary text-sm font-medium">Categorías</p>
+              <p className="text-3xl font-bold text-purple-brand mt-2 tracking-tight">
+                {data.categorias.length}
+              </p>
+              <p className="text-sm text-text-secondary mt-2">con gastos este mes</p>
             </div>
-            <div className="bg-card border border-card-border rounded-xl p-5">
-              <p className="text-text-secondary text-xs">Gastos fijos</p>
-              <p className="text-2xl font-bold text-amber-brand mt-1">{data.fijos.length}</p>
-              <p className="text-xs text-text-secondary mt-1">suscripciones</p>
+            <div className="apple-card p-6">
+              <p className="text-text-secondary text-sm font-medium">Gastos fijos</p>
+              <p className="text-3xl font-bold text-amber-brand mt-2 tracking-tight">
+                {data.fijos.length}
+              </p>
+              <p className="text-sm text-text-secondary mt-2">suscripciones</p>
             </div>
           </div>
 
           {/* Insights */}
-          <div className="bg-gradient-to-r from-mint-brand/60 to-purple-brand/10 border border-card-border rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-graphite-brand mb-3">💡 Insights de la IA</h2>
-            <ul className="space-y-2">
+          <div className="glass rounded-3xl p-8 border-l-4 border-l-emerald-brand">
+            <h2 className="text-xl font-bold text-graphite-brand mb-4 tracking-tight">
+              💡 Insights de la IA
+            </h2>
+            <ul className="space-y-3">
               {data.insights.map((ins, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-graphite-brand">
-                  <span className="text-purple-brand mt-0.5">✦</span> {ins}
+                <li key={i} className="flex items-start gap-3 text-base text-graphite-brand">
+                  <span className="text-emerald-brand mt-1 text-lg">✦</span>
+                  <span className="leading-relaxed">{ins}</span>
                 </li>
               ))}
             </ul>
@@ -175,18 +219,20 @@ export default function DashboardPage() {
 
           {/* Alertas */}
           {alertas.length > 0 && (
-            <div className="bg-amber-brand/5 border border-amber-brand/30 rounded-2xl p-6">
-              <h2 className="text-lg font-semibold text-amber-brand mb-3">⚠️ Alertas</h2>
-              <div className="space-y-2">
+            <div className="glass rounded-3xl p-8 border-l-4 border-l-amber-brand">
+              <h2 className="text-xl font-bold text-amber-brand mb-4 tracking-tight">
+                ⚠️ Alertas
+              </h2>
+              <div className="space-y-3">
                 {alertas.map((a, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-background/60 border border-amber-brand/20">
+                  <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white/50 border border-amber-brand/20">
                     <div>
-                      <p className="font-medium text-graphite-brand text-sm">{a.categoria}</p>
-                      <p className="text-xs text-text-secondary">
+                      <p className="font-semibold text-graphite-brand">{a.categoria}</p>
+                      <p className="text-sm text-text-secondary mt-1">
                         Llevas S/ {a.actual.toFixed(2)} vs. tu promedio de S/ {a.promedio.toFixed(2)}
                       </p>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-amber-brand/20 text-amber-brand text-xs font-bold">
+                    <span className="px-3 py-1.5 rounded-full bg-amber-brand/20 text-amber-brand text-sm font-bold">
                       +{a.pct.toFixed(0)}%
                     </span>
                   </div>
@@ -197,12 +243,14 @@ export default function DashboardPage() {
 
           {/* Charts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-card border border-card-border rounded-2xl p-6">
-              <h2 className="text-lg font-semibold text-graphite-brand mb-4">Gastos por categoría</h2>
+            <div className="apple-card p-8">
+              <h2 className="text-xl font-bold text-graphite-brand mb-6 tracking-tight">
+                Gastos por categoría
+              </h2>
               {data.categorias.length === 0 ? (
-                <p className="text-text-secondary text-sm py-10 text-center">Sin datos este mes</p>
+                <p className="text-text-secondary text-center py-12">Sin datos este mes</p>
               ) : (
-                <ResponsiveContainer width="100%" height={260}>
+                <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
                       data={data.categorias}
@@ -210,32 +258,60 @@ export default function DashboardPage() {
                       nameKey="categoria"
                       cx="50%"
                       cy="50%"
-                      innerRadius={55}
-                      outerRadius={90}
-                      paddingAngle={2}
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={3}
+                      strokeWidth={0}
                     >
                       {data.categorias.map((_, i) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(v: any) => fmtSoles(Number(v))} />
+                    <Tooltip 
+                      formatter={(v: any) => fmtSoles(Number(v))}
+                      contentStyle={{
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               )}
             </div>
 
-            <div className="bg-card border border-card-border rounded-2xl p-6">
-              <h2 className="text-lg font-semibold text-graphite-brand mb-4">Top gastos</h2>
+            <div className="apple-card p-8">
+              <h2 className="text-xl font-bold text-graphite-brand mb-6 tracking-tight">
+                Top gastos
+              </h2>
               {data.categorias.length === 0 ? (
-                <p className="text-text-secondary text-sm py-10 text-center">Sin datos este mes</p>
+                <p className="text-text-secondary text-center py-12">Sin datos este mes</p>
               ) : (
-                <ResponsiveContainer width="100%" height={260}>
+                <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={data.categorias.slice(0, 6)}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                    <XAxis dataKey="categoria" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
-                    <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
-                    <Tooltip formatter={(v: any) => fmtSoles(Number(v))} />
-                    <Bar dataKey="total" fill="#10B981" radius={[6, 6, 0, 0]} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.06)" />
+                    <XAxis 
+                      dataKey="categoria" 
+                      tick={{ fontSize: 12, fill: '#86868B' }} 
+                      tickLine={false} 
+                      axisLine={false} 
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12, fill: '#86868B' }} 
+                      tickLine={false} 
+                      axisLine={false} 
+                    />
+                    <Tooltip 
+                      formatter={(v: any) => fmtSoles(Number(v))}
+                      contentStyle={{
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                      }}
+                    />
+                    <Bar dataKey="total" fill="#10B981" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}

@@ -56,7 +56,14 @@ export default function ChatPage() {
   }
 
   if (status === "loading") {
-    return <div className="text-center py-20 text-text-secondary">Cargando...</div>;
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-brand/20 border-t-emerald-brand rounded-full animate-spin" />
+          <p className="text-text-secondary">Cargando...</p>
+        </div>
+      </div>
+    );
   }
   if (status === "unauthenticated") return null;
 
@@ -68,26 +75,31 @@ export default function ChatPage() {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-graphite-brand">💬 Asesor financiero</h1>
-        <p className="text-text-secondary mt-1">
+    <div className="max-w-3xl mx-auto animate-fadeIn">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-graphite-brand tracking-tight">
+          💬 Asesor financiero
+        </h1>
+        <p className="text-text-secondary mt-2 text-lg">
           Pregúntale a Gastify sobre tus gastos y recibe respuestas con tus datos reales.
         </p>
       </div>
 
-      <div className="bg-card border border-card-border rounded-2xl flex flex-col h-[60vh]">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Chat Container */}
+      <div className="glass rounded-3xl flex flex-col h-[65vh] overflow-hidden">
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {mensajes.map((m, i) => (
             <div
               key={i}
               className={`flex ${m.rol === "usuario" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${
                   m.rol === "usuario"
-                    ? "bg-emerald-brand text-white"
-                    : "bg-surface border border-card-border text-graphite-brand"
+                    ? "bg-emerald-brand text-white shadow-md"
+                    : "bg-white border border-card-border text-graphite-brand shadow-sm"
                 }`}
               >
                 {m.texto}
@@ -96,8 +108,8 @@ export default function ChatPage() {
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-surface border border-card-border rounded-2xl px-4 py-2.5">
-                <span className="inline-flex gap-1">
+              <div className="bg-white border border-card-border rounded-2xl px-5 py-3 shadow-sm">
+                <span className="inline-flex gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-purple-brand animate-bounce" />
                   <span className="w-2 h-2 rounded-full bg-purple-brand animate-bounce [animation-delay:0.2s]" />
                   <span className="w-2 h-2 rounded-full bg-purple-brand animate-bounce [animation-delay:0.4s]" />
@@ -108,33 +120,40 @@ export default function ChatPage() {
           <div ref={bottomRef} />
         </div>
 
-        <div className="border-t border-card-border p-3">
-          <div className="flex gap-2 flex-wrap mb-3">
+        {/* Suggestions */}
+        <div className="px-6 pb-4">
+          <div className="flex gap-2 flex-wrap">
             {sugerencias.map((s) => (
               <button
                 key={s}
-                onClick={() => {
-                  setInput(s);
-                }}
-                className="px-3 py-1.5 text-xs rounded-full border border-gray-200 text-text-secondary hover:border-purple-brand hover:text-purple-brand transition-all"
+                onClick={() => setInput(s)}
+                className="px-4 py-2 text-xs font-medium rounded-xl glass text-text-secondary hover:text-purple-brand hover:border-purple-brand transition-all"
               >
                 {s}
               </button>
             ))}
           </div>
-          <form onSubmit={enviar} className="flex gap-2">
+        </div>
+
+        {/* Input */}
+        <div className="border-t border-card-border p-4 bg-white/30">
+          <form onSubmit={enviar} className="flex gap-3">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Pregúntale a tu asesor financiero..."
-              className="flex-1 px-4 py-3 rounded-xl border border-card-border focus:outline-none focus:border-purple-brand focus:ring-2 focus:ring-purple-brand/20 bg-background transition-all"
+              className="apple-input flex-1"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="px-5 py-3 rounded-xl bg-purple-brand text-white font-medium hover:bg-purple-brand/90 disabled:opacity-50 transition-all"
+              className="apple-button bg-purple-brand text-white hover:bg-purple-brand/90 disabled:opacity-50 px-6"
             >
-              Enviar
+              {loading ? (
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                "Enviar"
+              )}
             </button>
           </form>
         </div>
