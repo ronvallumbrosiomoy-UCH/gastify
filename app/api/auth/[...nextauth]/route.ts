@@ -37,6 +37,30 @@ export const authOptions: AuthOptions = {
     strategy: "jwt" as const,
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google" && user?.email) {
+        try {
+          const client = await clientPromise;
+          const db = client.db("gastify");
+          const existing = await db.collection("users").findOne({ email: user.email });
+          if (!existing) {
+            const result = await db.collection("users").insertOne({
+              name: user.name || "",
+              email: user.email,
+              image: user.image,
+              role: "user",
+              country: "PE",
+              streakDays: 0,
+              createdAt: new Date(),
+            });
+            user.id = result.insertedId.toString();
+          } else {
+            user.id = existing._id.toString();
+          }
+        } catch {}
+      }
+      return true;
+    },
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.id = user.id;
