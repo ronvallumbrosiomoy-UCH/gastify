@@ -41,11 +41,23 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = (user as any).role || "user";
+        token.email = user.email;
+      }
+      if (token.email && !token.mongoId) {
+        try {
+          const client = await clientPromise;
+          const db = client.db("gastify");
+          const dbUser = await db.collection("users").findOne({ email: token.email });
+          if (dbUser) {
+            token.mongoId = dbUser._id.toString();
+            token.role = dbUser.role || "user";
+          }
+        } catch {}
       }
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      session.user.id = token.id as string;
+      session.user.id = token.mongoId || token.id;
       session.user.role = token.role as string;
       return session;
     },
