@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getMongoUserId } from "@/lib/auth";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export async function GET() {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.id) {
+    const userId = await getMongoUserId();
+    if (!userId) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
     const client = await clientPromise;
     const db = client.db("gastify");
-    const userId = new ObjectId(session.user.id);
+    const userIdObj = new ObjectId(userId);
 
     const now = new Date();
     const anio = now.getFullYear();
@@ -23,8 +23,8 @@ export async function GET() {
     const endPrev = new Date(anio, mes - 1, 1);
 
     const [actual, anterior] = await Promise.all([
-      db.collection("transactions").find({ userId, fecha: { $gte: startMes, $lt: endMes } }).toArray(),
-      db.collection("transactions").find({ userId, fecha: { $gte: startPrev, $lt: endPrev } }).toArray(),
+      db.collection("transactions").find({ userId: userIdObj, fecha: { $gte: startMes, $lt: endMes } }).toArray(),
+      db.collection("transactions").find({ userId: userIdObj, fecha: { $gte: startPrev, $lt: endPrev } }).toArray(),
     ]);
 
     const totalActual = actual.reduce((s, t) => s + t.monto, 0);
@@ -32,7 +32,6 @@ export async function GET() {
 
     const pct = totalAnterior > 0 ? ((totalActual - totalAnterior) / totalAnterior) * 100 : 0;
 
-    // Por categoría
     const porCategoria: Record<string, number> = {};
     for (const t of actual) {
       porCategoria[t.categoria] = (porCategoria[t.categoria] || 0) + t.monto;
@@ -41,11 +40,9 @@ export async function GET() {
       .map(([categoria, total]) => ({ categoria, total }))
       .sort((a, b) => b.total - a.total);
 
-    // Gasto diario promedio
     const diasTranscurridos = Math.max(now.getDate(), 1);
     const diarioPromedio = totalActual / diasTranscurridos;
 
-    // Gastos fijos (suscripciones)
     const fijos = actual
       .filter((t) => t.es_fijo)
       .map((t) => ({ comercio: t.comercio, monto: t.monto }));

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import clientPromise from "@/lib/mongodb";
 
 export async function GET() {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
@@ -26,7 +26,7 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }

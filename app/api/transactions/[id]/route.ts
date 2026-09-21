@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getMongoUserId } from "@/lib/auth";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
@@ -7,8 +7,8 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: Request, { params }: Params) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.id) {
+    const userId = await getMongoUserId();
+    if (!userId) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
     const { id } = await params;
@@ -29,7 +29,7 @@ export async function PATCH(req: Request, { params }: Params) {
     }
 
     const result = await db.collection("transactions").updateOne(
-      { _id: new ObjectId(id), userId: new ObjectId(session.user.id) },
+      { _id: new ObjectId(id), userId: new ObjectId(userId) },
       { $set: { ...update, updatedAt: new Date() } }
     );
 
@@ -44,8 +44,8 @@ export async function PATCH(req: Request, { params }: Params) {
 
 export async function DELETE(req: Request, { params }: Params) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.id) {
+    const userId = await getMongoUserId();
+    if (!userId) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
     const { id } = await params;
@@ -53,7 +53,7 @@ export async function DELETE(req: Request, { params }: Params) {
     const db = client.db("gastify");
     const result = await db.collection("transactions").deleteOne({
       _id: new ObjectId(id),
-      userId: new ObjectId(session.user.id),
+      userId: new ObjectId(userId),
     });
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: "Transacción no encontrada" }, { status: 404 });

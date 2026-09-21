@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
@@ -93,10 +94,22 @@ const tools = [
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.id) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
+
+    let userId = session.user.id;
+    if (!userId && session.user.email) {
+      const client = await clientPromise;
+      const db = client.db("gastify");
+      const user = await db.collection("users").findOne({ email: session.user.email });
+      if (user) userId = user._id.toString();
+    }
+    if (!userId) {
+      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
+    }
+
     const { message } = await req.json();
     if (!message) {
       return NextResponse.json({ error: "Mensaje vacío" }, { status: 400 });
@@ -130,9 +143,9 @@ export async function POST(req: Request) {
       const args = call.args || {};
       let resultData: any;
       if (name === "get_transactions") {
-        resultData = await queryTransactions(session.user.id, args);
+        resultData = await queryTransactions(userId, args);
       } else if (name === "get_monthly_totals") {
-        resultData = await getMonthlyTotals(session.user.id);
+        resultData = await getMonthlyTotals(userId);
       } else {
         resultData = { error: "Función desconocida" };
       }

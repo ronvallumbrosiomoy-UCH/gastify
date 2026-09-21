@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getMongoUserId } from "@/lib/auth";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
-function getUserId(session: any) {
-  return session?.user?.id || session?.user?.email;
-}
-
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.id) {
+    const userId = await getMongoUserId();
+    if (!userId) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
     const { searchParams } = new URL(req.url);
@@ -22,7 +18,7 @@ export async function GET(req: Request) {
 
     const client = await clientPromise;
     const db = client.db("gastify");
-    const filter: Record<string, any> = { userId: new ObjectId(session.user.id) };
+    const filter: Record<string, any> = { userId: new ObjectId(userId) };
     if (mes && anio) {
       const start = new Date(Number(anio), Number(mes) - 1, 1);
       const end = new Date(Number(anio), Number(mes), 1);
@@ -46,8 +42,8 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.id) {
+    const userId = await getMongoUserId();
+    if (!userId) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     }
     const body = await req.json();
@@ -74,7 +70,7 @@ export async function POST(req: Request) {
     const client = await clientPromise;
     const db = client.db("gastify");
     const result = await db.collection("transactions").insertOne({
-      userId: new ObjectId(session.user.id),
+      userId: new ObjectId(userId),
       monto: Number(monto),
       comercio,
       categoria,
