@@ -3,11 +3,9 @@ import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 
-let clientPromise: Promise<MongoClient>;
-
 async function createClient(): Promise<MongoClient> {
   if (!uri) {
-    return new MongoClient("mongodb://localhost:27017");
+    return new MongoClient("mongodb://localhost:27017").connect();
   }
 
   if (uri.startsWith("mongodb+srv://")) {
@@ -18,16 +16,17 @@ async function createClient(): Promise<MongoClient> {
       const addresses = await resolver.resolveSrv(`_mongodb._tcp.${url.hostname}`);
       const hosts = addresses.map((a) => `${a.name}:${a.port}`).join(",");
       const directUri = `mongodb://${url.username}:${url.password}@${hosts}${url.pathname}${url.search}`;
-      const client = new MongoClient(directUri);
-      return client;
+      return new MongoClient(directUri).connect();
     } catch (e) {
       console.error("SRV resolution failed, trying original URI:", e);
-      return new MongoClient(uri);
+      return new MongoClient(uri).connect();
     }
   }
 
-  return new MongoClient(uri);
+  return new MongoClient(uri).connect();
 }
+
+let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV !== "production") {
   const globalWithMongo = globalThis as typeof globalThis & {
