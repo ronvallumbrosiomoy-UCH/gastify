@@ -4,26 +4,57 @@ import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export async function GET(req: Request) {
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
   try {
     const { searchParams } = new URL(req.url);
     const code = searchParams.get("code");
     const state = searchParams.get("state");
+    const errorParam = searchParams.get("error");
 
-    if (!code || !state) {
+    if (errorParam) {
       return NextResponse.redirect(
-        new URL("/dashboard?gmail=error", process.env.NEXTAUTH_URL || "http://localhost:3000")
+        new URL(`/dashboard?gmail=error&msg=${encodeURIComponent("Google denied access: " + errorParam)}`, baseUrl)
       );
     }
 
-    const tokens = await exchangeCode(code);
+    if (!code || !state) {
+      return NextResponse.redirect(
+        new URL("/dashboard?gmail=error&msg=missing_code_or_state", baseUrl)
+      );
+    }
+
+    let tokens;
+    try {
+      tokens = await exchangeCode(code);
+    } catch (tokenErr: any) {
+      return NextResponse.redirect(
+        new URL(`/dashboard?gmail=error&msg=${encodeURIComponent("Token exchange failed: " + tokenErr.message)}`, baseUrl)
+      );
+    }
+
+    if (!tokens.access_token) {
+      return NextResponse.redirect(
+        new URL("/dashboard?gmail=error&msg=no_access_token", baseUrl)
+      );
+    }
+
+    let userId: ObjectId;
+    try {
+      userId = new ObjectId(state);
+    } catch {
+      return NextResponse.redirect(
+        new URL(`/dashboard?gmail=error&msg=invalid_user_id`, baseUrl)
+      );
+    }
 
     const client = await clientPromise;
     const db = client.db("gastify");
     await db.collection("gmailconnections").updateOne(
-      { userId: new ObjectId(state) },
+      { userId },
       {
         $set: {
-          userId: new ObjectId(state),
+          userId,
           accessToken: tokens.access_token,
           refreshToken: tokens.refresh_token,
           connectedAt: new Date(),
@@ -33,11 +64,11 @@ export async function GET(req: Request) {
     );
 
     return NextResponse.redirect(
-      new URL("/dashboard?gmail=connected", process.env.NEXTAUTH_URL || "http://localhost:3000")
+      new URL("/dashboard?gmail=connected", baseUrl)
     );
   } catch (e: any) {
     return NextResponse.redirect(
-      new URL(`/dashboard?gmail=error&msg=${encodeURIComponent(e.message)}`, process.env.NEXTAUTH_URL || "http://localhost:3000")
+      new URL(`/dashboard?gmail=error&msg=${encodeURIComponent("Unknown error: " + e.message)}`, baseUrl)
     );
   }
 }

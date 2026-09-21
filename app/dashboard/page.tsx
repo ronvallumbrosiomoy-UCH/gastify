@@ -53,8 +53,9 @@ export default function DashboardPage() {
       fetchInsights();
       const params = new URLSearchParams(window.location.search);
       const gmail = params.get("gmail");
+      const gmailMsg = params.get("msg");
       if (gmail === "connected") setGmailStatus("Conectado exitosamente");
-      if (gmail === "error") setGmailStatus("Error al conectar Gmail");
+      if (gmail === "error") setGmailStatus(`Error: ${gmailMsg || "desconocido"}`);
     }
   }, [status, router, fetchInsights]);
 
