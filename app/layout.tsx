@@ -9,56 +9,35 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className="bg-background text-foreground min-h-screen flex flex-col">
+      <body className="min-h-screen bg-mesh noise">
         <Providers>
           <Navigation />
-          <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+          <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
             {children}
           </main>
-          <footer className="border-t border-card-border py-8 mt-12 bg-white/30">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                {/* Logo & Description */}
-                <div className="flex flex-col items-center md:items-start gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-brand to-emerald-brand/80 flex items-center justify-center">
-                      <span className="text-sm font-bold text-white">G</span>
-                    </div>
-                    <span className="text-lg font-semibold text-graphite-brand tracking-tight">
-                      Gastify
-                    </span>
-                  </div>
-                  <p className="text-sm text-text-secondary text-center md:text-left">
-                    Tu dinero, tu control. Hecho con 💚 en Perú.
-                  </p>
+          <footer className="border-t border-black/5 py-10 mt-16">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
                 </div>
-
-                {/* Links */}
-                <div className="flex flex-wrap justify-center gap-6">
-                  <Link
-                    href="/privacidad"
-                    className="text-sm text-text-secondary hover:text-emerald-brand transition-all"
-                  >
-                    Privacidad
-                  </Link>
-                  <Link
-                    href="/terminos"
-                    className="text-sm text-text-secondary hover:text-emerald-brand transition-all"
-                  >
-                    Términos
-                  </Link>
-                  <Link
-                    href="/cookies"
-                    className="text-sm text-text-secondary hover:text-emerald-brand transition-all"
-                  >
-                    Cookies
-                  </Link>
-                </div>
-
-                {/* Copyright */}
-                <p className="text-xs text-text-secondary">
-                  © 2026 Gastify. Todos los derechos reservados.
-                </p>
+                <span className="text-[14px] text-gray-brand">
+                  © 2026 Gastify
+                </span>
+              </div>
+              <div className="flex gap-6">
+                <Link href="/privacidad" className="text-[13px] text-gray-brand hover:text-graphite-brand transition-colors">
+                  Privacidad
+                </Link>
+                <Link href="/terminos" className="text-[13px] text-gray-brand hover:text-graphite-brand transition-colors">
+                  Términos
+                </Link>
+                <Link href="/cookies" className="text-[13px] text-gray-brand hover:text-graphite-brand transition-colors">
+                  Cookies
+                </Link>
               </div>
             </div>
           </footer>

@@ -8,75 +8,70 @@ export default function Navigation() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/dashboard", label: "Dashboard", icon: "📊" },
-    { href: "/transactions", label: "Transacciones", icon: "💳" },
-    { href: "/rules", label: "Reglas", icon: "⚡" },
-    { href: "/chat", label: "Asesor IA", icon: "🤖" },
-    { href: "/pricing", label: "Premium", icon: "⭐" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/transactions", label: "Transacciones" },
+    { href: "/rules", label: "Reglas" },
+    { href: "/chat", label: "Asesor IA" },
+    { href: "/pricing", label: "Premium" },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-white/10">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-black/5">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-brand to-emerald-brand/80 flex items-center justify-center shadow-md">
-                <span className="text-xl font-bold text-white">G</span>
-              </div>
-              <span className="text-xl font-semibold text-graphite-brand hidden sm:inline tracking-tight">
-                Gastify
-              </span>
-            </Link>
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-500/20">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+            </div>
+            <span className="text-[17px] font-semibold tracking-tight text-graphite-brand hidden sm:block">
+              Gastify
+            </span>
+          </Link>
 
-            {/* Navigation Links */}
-            {session?.user && (
-              <div className="hidden md:flex items-center gap-1 bg-white/50 rounded-2xl p-1 border border-white/20">
-                {links.map((l) => (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                      pathname === l.href
-                        ? "bg-white text-emerald-brand shadow-sm"
-                        : "text-text-secondary hover:text-graphite-brand hover:bg-white/50"
-                    }`}
-                  >
-                    <span className="text-base">{l.icon}</span>
-                    <span className="hidden lg:inline">{l.label}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Nav Links — centered pills */}
+          {session?.user && (
+            <div className="hidden md:flex items-center gap-1">
+              {links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`px-3.5 py-2 rounded-lg text-[14px] font-medium transition-all duration-150 ${
+                    pathname === l.href
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "text-gray-brand hover:text-graphite-brand hover:bg-black/[0.03]"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          )}
 
-          {/* Right Side */}
-          <div className="flex items-center gap-4">
+          {/* Right side */}
+          <div className="flex items-center gap-3">
             {session?.user ? (
               <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 border border-white/20">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-brand to-mint-brand flex items-center justify-center">
-                    <span className="text-sm font-medium text-white">
-                      {session.user.name?.charAt(0) || "U"}
-                    </span>
+                <div className="hidden sm:flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[13px] font-semibold shadow-sm">
+                    {session.user.name?.charAt(0) || "U"}
                   </div>
-                  <span className="text-sm font-medium text-graphite-brand">
+                  <span className="text-[14px] font-medium text-graphite-brand">
                     {session.user.name}
                   </span>
                 </div>
                 <button
                   onClick={() => signOut()}
-                  className="px-4 py-2 text-sm font-medium rounded-xl border border-card-border hover:bg-red-50 hover:border-red-200 hover:text-red-brand transition-all"
+                  className="btn btn-ghost h-9 px-3 text-[13px]"
                 >
                   Salir
                 </button>
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="apple-button apple-button-primary text-sm"
-              >
+              <Link href="/login" className="btn btn-primary h-9 px-4 text-[13px]">
                 Iniciar sesión
               </Link>
             )}

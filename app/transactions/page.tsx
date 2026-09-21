@@ -62,11 +62,8 @@ export default function TransactionsPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center py-32">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-emerald-brand/20 border-t-emerald-brand rounded-full animate-spin" />
-          <p className="text-text-secondary">Cargando...</p>
-        </div>
+      <div className="flex items-center justify-center py-40">
+        <div className="w-6 h-6 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
       </div>
     );
   }
@@ -79,18 +76,18 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-graphite-brand tracking-tight">
+          <h1 className="text-[28px] font-bold tracking-tight text-graphite-brand">
             Transacciones
           </h1>
-          <p className="text-text-secondary mt-2 text-lg">
+          <p className="text-[15px] text-gray-brand mt-1">
             Tus gastos detectados automáticamente.
           </p>
         </div>
-        <div className="glass rounded-2xl px-6 py-4 text-center">
-          <p className="text-sm text-text-secondary font-medium">Total gastos</p>
-          <p className="text-2xl font-bold text-graphite-brand mt-1 tracking-tight">
+        <div className="kpi px-5 py-3 inline-flex flex-col items-end">
+          <p className="text-[12px] font-medium text-gray-brand">Total gastos</p>
+          <p className="text-[20px] font-bold tracking-tight text-graphite-brand">
             {fmtSoles(total)}
           </p>
         </div>
@@ -100,10 +97,10 @@ export default function TransactionsPage() {
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setCategoriaFilter("")}
-          className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+          className={`h-8 px-3.5 rounded-lg text-[13px] font-medium transition-all ${
             !categoriaFilter
-              ? "bg-emerald-brand text-white shadow-md"
-              : "glass text-text-secondary hover:text-graphite-brand"
+              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              : "bg-white text-gray-brand border border-black/8 hover:border-black/15"
           }`}
         >
           Todas
@@ -112,10 +109,10 @@ export default function TransactionsPage() {
           <button
             key={c}
             onClick={() => setCategoriaFilter(categoriaFilter === c ? "" : c)}
-            className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+            className={`h-8 px-3.5 rounded-lg text-[13px] font-medium transition-all ${
               categoriaFilter === c
-                ? "bg-emerald-brand text-white shadow-md"
-                : "glass text-text-secondary hover:text-graphite-brand"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : "bg-white text-gray-brand border border-black/8 hover:border-black/15"
             }`}
           >
             {c}
@@ -125,54 +122,51 @@ export default function TransactionsPage() {
 
       {/* Content */}
       {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-emerald-brand/20 border-t-emerald-brand rounded-full animate-spin" />
-            <p className="text-text-secondary">Cargando transacciones...</p>
-          </div>
+        <div className="flex items-center justify-center py-32">
+          <div className="w-6 h-6 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
         </div>
       ) : transactions.length === 0 ? (
-        <div className="glass rounded-3xl p-12 text-center">
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-brand/20 to-mint-brand/30 flex items-center justify-center mx-auto mb-6">
-            <span className="text-4xl">📭</span>
+        <div className="card-elevated p-16 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center mx-auto mb-5">
+            <span className="text-2xl">📭</span>
           </div>
-          <h2 className="text-2xl font-bold text-graphite-brand mb-3 tracking-tight">
+          <h2 className="text-[20px] font-bold tracking-tight text-graphite-brand mb-2">
             Sin transacciones
           </h2>
-          <p className="text-text-secondary max-w-md mx-auto text-lg">
-            Conecta tu Gmail o usa &quot;Sincronizar&quot; para detectar tus gastos automáticamente.
+          <p className="text-[15px] text-gray-brand max-w-sm mx-auto">
+            Conecta tu Gmail o usa &quot;Sincronizar&quot; para detectar gastos.
           </p>
         </div>
       ) : (
-        <div className="glass rounded-3xl overflow-hidden">
+        <div className="card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-[14px]">
               <thead>
-                <tr className="border-b border-card-border text-left text-xs text-text-secondary uppercase tracking-wider">
-                  <th className="px-6 py-4 font-semibold">Fecha</th>
-                  <th className="px-6 py-4 font-semibold">Comercio</th>
-                  <th className="px-6 py-4 font-semibold">Categoría</th>
-                  <th className="px-6 py-4 font-semibold text-right">Monto</th>
-                  <th className="px-6 py-4 font-semibold">Banco</th>
-                  <th className="px-6 py-4"></th>
+                <tr className="border-b border-black/5">
+                  <th className="text-left px-5 py-3.5 text-[12px] font-semibold text-gray-brand uppercase tracking-wider">Fecha</th>
+                  <th className="text-left px-5 py-3.5 text-[12px] font-semibold text-gray-brand uppercase tracking-wider">Comercio</th>
+                  <th className="text-left px-5 py-3.5 text-[12px] font-semibold text-gray-brand uppercase tracking-wider">Categoría</th>
+                  <th className="text-right px-5 py-3.5 text-[12px] font-semibold text-gray-brand uppercase tracking-wider">Monto</th>
+                  <th className="text-left px-5 py-3.5 text-[12px] font-semibold text-gray-brand uppercase tracking-wider">Banco</th>
+                  <th className="px-5 py-3.5"></th>
                 </tr>
               </thead>
               <tbody>
                 {transactions.map((t) => (
                   <tr
                     key={t._id}
-                    className="border-b border-card-border last:border-0 hover:bg-white/50 transition-colors"
+                    className="border-b border-black/3 last:border-0 hover:bg-black/[0.015] transition-colors"
                   >
-                    <td className="px-6 py-4 text-text-secondary">{fmtFecha(t.fecha)}</td>
-                    <td className="px-6 py-4 font-medium text-graphite-brand">{t.comercio}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-5 py-3.5 text-gray-brand">{fmtFecha(t.fecha)}</td>
+                    <td className="px-5 py-3.5 font-medium text-graphite-brand">{t.comercio}</td>
+                    <td className="px-5 py-3.5">
                       {editingCat === t._id ? (
                         <select
                           value={t.categoria}
                           onChange={(e) => updateCategoria(t._id, e.target.value)}
                           onBlur={() => setEditingCat(null)}
                           autoFocus
-                          className="apple-input py-1 px-2 text-xs"
+                          className="input h-8 px-2 text-[13px] w-32"
                         >
                           {CATEGORIAS_BASE.map((c) => (
                             <option key={c} value={c}>{c}</option>
@@ -181,23 +175,24 @@ export default function TransactionsPage() {
                       ) : (
                         <button
                           onClick={() => setEditingCat(t._id)}
-                          className="px-3 py-1.5 rounded-full bg-purple-brand/10 text-purple-brand text-xs font-medium hover:bg-purple-brand/20 transition-all"
-                          title="Cambiar categoría"
+                          className="px-2.5 py-1 rounded-md bg-purple-50 text-purple-600 text-[12px] font-medium hover:bg-purple-100 transition-colors"
                         >
-                          {t.categoria} ✏️
+                          {t.categoria}
                         </button>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-graphite-brand">
+                    <td className="px-5 py-3.5 text-right font-semibold text-graphite-brand tabular-nums">
                       {t.tipo === "ingreso" ? "+" : "-"}{fmtSoles(t.monto)}
                     </td>
-                    <td className="px-6 py-4 text-text-secondary">{t.banco || "—"}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-5 py-3.5 text-gray-brand">{t.banco || "—"}</td>
+                    <td className="px-5 py-3.5">
                       <button
                         onClick={() => deleteTransaction(t._id)}
-                        className="text-red-brand/60 hover:text-red-brand text-sm transition-all"
+                        className="text-gray-brand/40 hover:text-red-500 transition-colors"
                       >
-                        🗑️
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                        </svg>
                       </button>
                     </td>
                   </tr>

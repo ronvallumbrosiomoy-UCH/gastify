@@ -14,7 +14,7 @@ export default function ChatPage() {
   const [mensajes, setMensajes] = useState<Mensaje[]>([
     {
       rol: "ia",
-      texto: "¡Hola! Soy tu asesor financiero. Pregúntame sobre tus gastos, por ejemplo: ¿en qué gasté más este mes?",
+      texto: "¡Hola! Soy tu asesor financiero. Pregúntame sobre tus gastos.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -36,7 +36,6 @@ export default function ChatPage() {
     setInput("");
     setMensajes((m) => [...m, { rol: "usuario", texto: pregunta }]);
     setLoading(true);
-
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -46,7 +45,7 @@ export default function ChatPage() {
       const json = await res.json();
       setMensajes((m) => [
         ...m,
-        { rol: "ia", texto: json.respuesta || json.error || "Error al responder" },
+        { rol: "ia", texto: json.respuesta || json.error || "Error" },
       ]);
     } catch {
       setMensajes((m) => [...m, { rol: "ia", texto: "Error de conexión" }]);
@@ -57,11 +56,8 @@ export default function ChatPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center py-32">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-emerald-brand/20 border-t-emerald-brand rounded-full animate-spin" />
-          <p className="text-text-secondary">Cargando...</p>
-        </div>
+      <div className="flex items-center justify-center py-40">
+        <div className="w-6 h-6 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
       </div>
     );
   }
@@ -76,30 +72,28 @@ export default function ChatPage() {
 
   return (
     <div className="max-w-3xl mx-auto animate-fadeIn">
-      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-graphite-brand tracking-tight">
-          💬 Asesor financiero
+        <h1 className="text-[28px] font-bold tracking-tight text-graphite-brand">
+          Asesor financiero
         </h1>
-        <p className="text-text-secondary mt-2 text-lg">
-          Pregúntale a Gastify sobre tus gastos y recibe respuestas con tus datos reales.
+        <p className="text-[15px] text-gray-brand mt-1">
+          Pregúntale a Gastify sobre tus gastos.
         </p>
       </div>
 
-      {/* Chat Container */}
-      <div className="glass rounded-3xl flex flex-col h-[65vh] overflow-hidden">
+      <div className="card-elevated flex flex-col h-[65vh] overflow-hidden">
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {mensajes.map((m, i) => (
             <div
               key={i}
               className={`flex ${m.rol === "usuario" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${
+                className={`max-w-[80%] px-4 py-3 text-[14px] leading-relaxed rounded-2xl ${
                   m.rol === "usuario"
-                    ? "bg-emerald-brand text-white shadow-md"
-                    : "bg-white border border-card-border text-graphite-brand shadow-sm"
+                    ? "bg-emerald-500 text-white rounded-br-md"
+                    : "bg-black/[0.04] text-graphite-brand rounded-bl-md"
                 }`}
               >
                 {m.texto}
@@ -108,11 +102,11 @@ export default function ChatPage() {
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white border border-card-border rounded-2xl px-5 py-3 shadow-sm">
-                <span className="inline-flex gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-purple-brand animate-bounce" />
-                  <span className="w-2 h-2 rounded-full bg-purple-brand animate-bounce [animation-delay:0.2s]" />
-                  <span className="w-2 h-2 rounded-full bg-purple-brand animate-bounce [animation-delay:0.4s]" />
+              <div className="bg-black/[0.04] rounded-2xl rounded-bl-md px-4 py-3">
+                <span className="inline-flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce [animation-delay:0.15s]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce [animation-delay:0.3s]" />
                 </span>
               </div>
             </div>
@@ -121,13 +115,13 @@ export default function ChatPage() {
         </div>
 
         {/* Suggestions */}
-        <div className="px-6 pb-4">
+        <div className="px-5 pb-3">
           <div className="flex gap-2 flex-wrap">
             {sugerencias.map((s) => (
               <button
                 key={s}
                 onClick={() => setInput(s)}
-                className="px-4 py-2 text-xs font-medium rounded-xl glass text-text-secondary hover:text-purple-brand hover:border-purple-brand transition-all"
+                className="h-8 px-3 rounded-lg text-[12px] font-medium bg-black/[0.04] text-gray-brand hover:bg-black/[0.07] transition-colors"
               >
                 {s}
               </button>
@@ -136,24 +130,20 @@ export default function ChatPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-card-border p-4 bg-white/30">
-          <form onSubmit={enviar} className="flex gap-3">
+        <div className="border-t border-black/5 p-4">
+          <form onSubmit={enviar} className="flex gap-2">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Pregúntale a tu asesor financiero..."
-              className="apple-input flex-1"
+              placeholder="Pregúntale a tu asesor..."
+              className="input flex-1 h-11"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="apple-button bg-purple-brand text-white hover:bg-purple-brand/90 disabled:opacity-50 px-6"
+              className="btn btn-primary h-11 px-5 disabled:opacity-40"
             >
-              {loading ? (
-                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                "Enviar"
-              )}
+              {loading ? <span className="spinner" /> : "Enviar"}
             </button>
           </form>
         </div>
