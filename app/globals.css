@@ -123,7 +123,8 @@ body {
 .bg-apple {
   background: var(--gradient-mesh) !important;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .bg-apple::before {
