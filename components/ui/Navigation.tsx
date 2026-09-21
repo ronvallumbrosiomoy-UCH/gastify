@@ -16,33 +16,33 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-black/5">
+    <nav className="sticky top-0 z-50 glass border-b border-white/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-500/20">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/25 group-hover:shadow-emerald-500/40 transition-shadow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="1" x2="12" y2="23" />
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             </div>
-            <span className="text-[17px] font-semibold tracking-tight text-graphite-brand hidden sm:block">
+            <span className="text-[18px] font-bold tracking-tight text-graphite-brand hidden sm:block">
               Gastify
             </span>
           </Link>
 
-          {/* Nav Links — centered pills */}
+          {/* Nav Links */}
           {session?.user && (
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-1 p-1 rounded-2xl bg-black/[0.03]">
               {links.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className={`px-3.5 py-2 rounded-lg text-[14px] font-medium transition-all duration-150 ${
+                  className={`px-4 py-2 rounded-xl text-[14px] font-medium transition-all duration-200 ${
                     pathname === l.href
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "text-gray-brand hover:text-graphite-brand hover:bg-black/[0.03]"
+                      ? "bg-white text-emerald-600 shadow-sm"
+                      : "text-gray-brand hover:text-graphite-brand hover:bg-white/50"
                   }`}
                 >
                   {l.label}
@@ -55,8 +55,8 @@ export default function Navigation() {
           <div className="flex items-center gap-3">
             {session?.user ? (
               <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[13px] font-semibold shadow-sm">
+                <div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/50 border border-white/30">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[12px] font-bold shadow-sm">
                     {session.user.name?.charAt(0) || "U"}
                   </div>
                   <span className="text-[14px] font-medium text-graphite-brand">

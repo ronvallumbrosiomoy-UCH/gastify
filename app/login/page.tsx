@@ -51,26 +51,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh noise flex items-center justify-center px-4">
-      <div className="w-full max-w-[400px] animate-fadeIn">
+    <div className="min-h-screen bg-apple flex items-center justify-center px-4 relative">
+      {/* Floating decorative elements */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-400/20 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/10 rounded-full blur-3xl" />
+
+      <div className="w-full max-w-[420px] relative z-10">
         {/* Logo + Heading */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/20 mb-5">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23" />
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
+        <div className="text-center mb-10 animate-fadeIn">
+          <div className="illustration inline-flex mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-500/30 relative z-10">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+            </div>
           </div>
-          <h1 className="text-[28px] font-bold tracking-tight text-graphite-brand">
-            Bienvenido a Gastify
+          <h1 className="text-[32px] font-extrabold tracking-tight text-graphite-brand mb-2">
+            Bienvenido a{" "}
+            <span className="gradient-text">Gastify</span>
           </h1>
-          <p className="text-[15px] text-gray-brand mt-2">
+          <p className="text-[16px] text-gray-brand">
             Tu dinero, tu control.
           </p>
         </div>
 
         {/* Card */}
-        <div className="card-elevated p-8">
+        <div className="card-elevated p-8 animate-slideUp">
           {/* Segmented Control */}
           <div className="seg-control mb-6">
             <button
@@ -89,7 +97,10 @@ export default function LoginPage() {
 
           {/* Error */}
           {error && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[14px] font-medium animate-slideUp">
+            <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-[14px] font-medium animate-slideUp flex items-center gap-2">
+              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
               {error}
             </div>
           )}
@@ -98,7 +109,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "signup" && (
               <div className="animate-fadeIn">
-                <label className="block text-[13px] font-medium text-gray-brand mb-1.5 ml-0.5">
+                <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">
                   Nombre
                 </label>
                 <input
@@ -112,7 +123,7 @@ export default function LoginPage() {
               </div>
             )}
             <div>
-              <label className="block text-[13px] font-medium text-gray-brand mb-1.5 ml-0.5">
+              <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">
                 Email
               </label>
               <input
@@ -125,7 +136,7 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <label className="block text-[13px] font-medium text-gray-brand mb-1.5 ml-0.5">
+              <label className="block text-[13px] font-semibold text-gray-brand mb-2 ml-1">
                 Contraseña
               </label>
               <input
@@ -167,14 +178,14 @@ export default function LoginPage() {
           </button>
 
           {/* Terms */}
-          <p className="text-center text-[12px] text-gray-brand mt-5 leading-relaxed">
+          <p className="text-center text-[12px] text-gray-brand mt-6 leading-relaxed">
             Al continuar, aceptas nuestros{" "}
-            <a href="/terminos" className="text-emerald-brand hover:underline font-medium">
+            <a href="/terminos" className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
               Términos
             </a>{" "}
             y{" "}
-            <a href="/privacidad" className="text-emerald-brand hover:underline font-medium">
-              Política de Privacidad
+            <a href="/privacidad" className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
+              Privacidad
             </a>
           </p>
         </div>
