@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navigation from "@/components/ui/Navigation";
 import Providers from "@/components/ui/Providers";
+import "./globals.css";
 
 export default function RootLayout({
   children,
